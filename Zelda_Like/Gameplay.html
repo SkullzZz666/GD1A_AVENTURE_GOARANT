@@ -61,6 +61,8 @@
             { frameWidth: 96, frameHeight: 32});
             this.load.image("Inventairefull", "assets/Inventairefull.png",
             { frameWidth: 96, frameHeight: 32});
+            this.load.image("bandeau", "assets/bandeau.png");
+            this.load.image("clé","assets/bandeau.png");
         }
 
 
@@ -75,8 +77,9 @@
         var keyD;
         var playerSpeed= 700
         var pv = 3
-        var slot = 0 
-        
+        var slot = 0
+        var bandeau 
+        var clé
         
 
            
@@ -219,6 +222,20 @@
 
             Barre_inventaire.setInteractive();
 
+            this.bandeau = this.physics.add.group({
+                allowGravity: false,
+                immovable: true
+            });
+            this.clé = this.physics.add.group({
+                allowGravity: false,
+                immovable: true
+            });
+            this.carteDuNiveau.getObjectLayer('Clé').objects.forEach((objet) => {
+                const cléSprite = this.clé.create(objet.x, objet.y-32, 'clé').setOrigin(0);
+            });
+            this.carteDuNiveau.getObjectLayer('Bandeau').objects.forEach((objet) => {
+                const bandeauSprite = this.bandeau.create(objet.x, objet.y-32, 'bandeau').setOrigin(0);
+            });
             this.anims.create({
                 key: 'left',
                 frames: this.anims.generateFrameNumbers('perso', {
