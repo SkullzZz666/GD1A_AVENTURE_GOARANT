@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mon 1er jeu Phaser</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var config = {
+            type: Phaser.AUTO,
+            width: 1280,
+            height: 720,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: {
+                        y: 0
+                    
+                    },
+                    debug: true
+                }
+            },
+            pixelArt: true,
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+
+        new Phaser.Game(config);
+
+        function preload() {
+            this.load.image("tiles", "assets/Sprite_Sheet.png")
+            this.load.tilemapTiledJSON("map", "Map_Zelda_Like.JSON");
+
+            this.load.spritesheet('perso','assets/Animation_Héro.png',
+            { frameWidth: 34, frameHeight: 48 });
+
+            this.load.image("BLOCINVISIBLE", "assets/BLOCINVISIBLE.png")
+            this.load.image("Barre_de_vie3pv", "assets/Barre_de_vie3pv.png",
+            { frameWidth: 16, frameHeight: 47});
+            this.load.image("Barre_de_vie_mort", "assets/Barre_de_vie_mort.png",
+            { frameWidth: 16, frameHeight: 47});
+            this.load.image("Barre_de_vie2pv", "assets/Barre_de_vie2pv.png",
+            { frameWidth: 16, frameHeight: 47});
+            this.load.image("Barre_de_vie1pv", "assets/Barre_de_vie1pv.png",
+            { frameWidth: 16, frameHeight: 47});
+            this.load.image("Inventaire1slotpris", "assets/Inventaire1slotpris.png",
+            { frameWidth: 96, frameHeight: 32});
+            this.load.image("Inventaire2slotpris", "assets/Inventaire2slotpris.png",
+            { frameWidth: 96, frameHeight: 32});
+            this.load.image("Inventairefull", "assets/Inventairefull.png",
+            { frameWidth: 96, frameHeight: 32});
+            this.load.image("bandeau", "assets/bandeau.png");
+            this.load.image("clé","assets/bandeau.png");
+        }
+
+
+
+        var player;
+        var cursors;
+        var spacebar
+        var keyT
+        var keyZ;
+        var keyQ;
+        var keyS;
+        var keyD;
+        var playerSpeed= 700
+        var pv = 3
+        var slot = 0
+        var bandeau 
+        var clé
+        
+
+           
+        
+
+        function create() {
+
+
+            const carte = this.make.tilemap({ key: 'map' });
+
+        const tileset = carte.addTilesetImage(
+                "Sprite_Sheet",
+                "tiles",
+                
+                );  
+
+                const Sol = carte.createLayer(
+                    "Sol",
+                    tileset
+                    ); 
+
+                    const Chaine = carte.createLayer(
+                    "Chaine",
+                    tileset
+                    );
+
+
+                    const Passages = carte.createLayer(
+                    "Passages",
+                    tileset
+                    );
+
+                    const Calque2 = carte.createLayer(
+                    "Calque de Tuiles 2",
+                    tileset
+                    );
+
+                    const Vases = carte.createLayer(
+                    "Vases",
+                    tileset
+                    );
+
+                    const Collectables = carte.createLayer(
+                    "Collectables",
+                    tileset
+                    );
+
+                    const Caisses = carte.createLayer(
+                    "Caisses",
+                    tileset
+                    );
+
+                    const bordures = carte.createLayer(
+                    "bordures",
+                    tileset
+                    ); 
+
+            
+            player = this.physics.add.sprite(1100, 2500, 'perso');
+            player.setSize (30, 9);
+            player.setOffset (2, 40);
+
+            this.physics.add.collider(player, bordures);
+            bordures.setCollisionByProperty({ estSolide: false });
+
+            this.cameras.main.zoom = 2
+            this.cameras.main.startFollow(player); 
+            this.physics.world.setBounds(0, 0, 3000, 5000);
+            this.cameras.main.setBounds(0, 0, 3000, 5000);
+
+
+
+
+            player.setCollideWorldBounds(true);
+
+
+            
+
+
+            tpZoneCle =  this.physics.add.image(1010,2380,"BLOCINVISIBLE")
+            // je place la zone ou le joueur doit passer pour se tp 
+
+            this.physics.add.overlap(player,tpZoneCle, entrerZoneCle, null, this)
+                                                // nom de la fonction appelé
+
+
+            // fonction qui permet de tp le joueur lorsquil passe sur l'image "tpZonecle"
+
+
+
+
+
+
+
+
+
+
+            tpCentreZoneCle =  this.physics.add.image(1200,2930,"BLOCINVISIBLE")
+
+            this.physics.add.overlap(player,tpCentreZoneCle, sortirZoneCle, null, this)
+
+
+            tpMidZoneHaut =  this.physics.add.image(1296,2380,"BLOCINVISIBLE")
+
+            this.physics.add.overlap(player,tpMidZoneHaut, entreeMidZoneHaut, null, this)
+
+            tpCentreMidZoneHaut =  this.physics.add.image(1100,2060,"BLOCINVISIBLE")
+
+            this.physics.add.overlap(player,tpCentreMidZoneHaut, sortieMidZoneHaut, null, this)
+
+            tpMidZoneTrous =  this.physics.add.image(1340,2490,"BLOCINVISIBLE")
+            
+            this.physics.add.overlap(player, tpMidZoneTrous, tpZoneLabyrinthe, null, this)
+
+            tpZoneTrousMid =  this.physics.add.image(1490, 2525,"BLOCINVISIBLE")
+            
+            this.physics.add.overlap(player, tpZoneTrousMid, tpZoneLabyrintheMid, null, this)
+
+            tpZoneTrousItem =  this.physics.add.image(1970, 2400,"BLOCINVISIBLE")
+            
+            this.physics.add.overlap(player, tpZoneTrousItem, tpZoneLabyrintheItem, null, this)
+
+            tpZoneItemTrous =  this.physics.add.image(2120, 2370,"BLOCINVISIBLE")
+            
+            this.physics.add.overlap(player, tpZoneItemTrous, tpZoneItemLabyrinthe, null, this)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            Barre_de_vie =  this.add.image(345, 235,"Barre_de_vie3pv")
+
+            Barre_de_vie.setScrollFactor (0);
+
+            Barre_de_vie.setScale (1.9);
+
+            Barre_inventaire =  this.add.image(900, 520,"Inventaire1slotpris")
+
+            Barre_inventaire.setScrollFactor (0);
+
+            Barre_inventaire.setScale (1);
+
+            Barre_de_vie.setInteractive();
+
+            Barre_inventaire.setInteractive();
+
+            this.bandeau = this.physics.add.group({
+                allowGravity: false,
+                immovable: true
+            });
+            this.clé = this.physics.add.group({
+                allowGravity: false,
+                immovable: true
+            });
+            this.carteDuNiveau.getObjectLayer('Clé').objects.forEach((objet) => {
+                const cléSprite = this.clé.create(objet.x, objet.y-32, 'clé').setOrigin(0);
+            });
+            this.carteDuNiveau.getObjectLayer('Bandeau').objects.forEach((objet) => {
+                const bandeauSprite = this.bandeau.create(objet.x, objet.y-32, 'bandeau').setOrigin(0);
+            });
+            this.anims.create({
+                key: 'left',
+                frames: this.anims.generateFrameNumbers('perso', {
+                    start: 4,
+                    end: 7
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: 'turn',
+                frames: [{
+                    key: 'perso',
+                    frame: 4
+                }],
+                frameRate: 20
+            });
+            this.anims.create({
+                key: 'right',
+                frames: this.anims.generateFrameNumbers('perso', {
+                    start: 5,
+                    end: 8
+                }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+            
+
+            this.input.keyboard.enabled = true
+            spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+            keyT = this.input.keyboard.addKey('t');
+            keyZ = this.input.keyboard.addKey('z');
+            keyQ = this.input.keyboard.addKey('q');
+            keyD = this.input.keyboard.addKey('d');
+            keyS = this.input.keyboard.addKey('s');
+            doubleJump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+
+
+        };
+        function update() {
+            if (pv==3){
+                Barre_de_vie.setTexture("Barre_de_vie3pv")
+            }
+            
+            if (pv==2)
+            {
+                Barre_de_vie.setTexture("Barre_de_vie2pv")
+            }
+            if (pv==1)
+            {
+                Barre_de_vie.setTexture("Barre_de_vie1pv")
+            }
+            if (pv==0)
+            {
+                Barre_de_vie.setTexture("Barre_de_vie_mort")
+            }
+            if (slot==2){
+                Barre_inventaire.setTexture("Inventairefull")
+            }
+            
+            if (slot==1)
+            {
+                Barre_inventaire.setTexture("Inventaire2slotpris")
+            }
+            if (slot==0)
+            {
+                Barre_inventaire.setTexture("Inventaire1slotpris")
+            }
+
+            if (Phaser.Input.Keyboard.DownDuration(keyZ, 100000)) {
+                player.setVelocityY(-playerSpeed);
+            } else if (Phaser.Input.Keyboard.DownDuration(keyS, 100000)) {
+                player.setVelocityY(playerSpeed);
+            } else {
+                player.setVelocityY(0);
+            }
+            if (Phaser.Input.Keyboard.DownDuration(keyD, 100000)) {
+                player.setVelocityX(playerSpeed);
+            } else if (Phaser.Input.Keyboard.DownDuration(keyQ, 100000)) {
+                player.setVelocityX(-playerSpeed);
+            } else {
+                player.setVelocityX(0);
+            }
+            
+            } 
+
+            function entrerZoneCle(player,tpZoneCle){
+                player.x = 1200,  // co X dans lequel le joueur va se TP
+                player.y = 3000  // co Y dans lequel le joueur va se TP
+            }
+
+
+            function sortirZoneCle(player,tpCentreZoneCle){
+                player.x = 1010,
+                player.y = 2480
+            }
+
+            function entreeMidZoneHaut(player,tpMidZoneHaut){
+                player.x = 1100,
+                player.y = 2000
+            }
+
+            function sortieMidZoneHaut(player,tpCentreMidZoneHaut){
+                player.x = 1296,
+                player.y = 2460}
+
+            function tpZoneLabyrinthe(player,tpMidZoneTrous){
+                player.x = 1520,
+                player.y = 2550
+            }
+            {function tpZoneLabyrintheMid(player, tpZoneTrousMid){
+                player.x = 1300,
+                player.y = 2490
+            }
+            function tpZoneLabyrintheItem(player, tpZoneTrousItem){
+                player.x = 2170,
+                player.y = 2350 
+
+            }
+            function tpZoneItemLabyrinthe(player, tpZoneItemTrous){
+                player.x = 1950
+                player.y = 2350
+            }
+        }
+            
+            
+
+            
+
+    </script>
+</body>
+
+</html>
