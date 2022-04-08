@@ -45,6 +45,8 @@
 
             this.load.spritesheet('perso','assets/Animation_Héro.png',
             { frameWidth: 32, frameHeight: 48 });
+            this.load.spritesheet('ennemis', 'assets/Animation_monstre.png',
+            { frameWidth: 32, frameHeight: 32 });
 
             this.load.image("BLOCINVISIBLE", "assets/BLOCINVISIBLE.png")
             this.load.image("Barre_de_vie3pv", "assets/Barre_de_vie3pv.png",
@@ -75,13 +77,13 @@
         var keyQ;
         var keyS;
         var keyD;
-        var playerSpeed= 150
+        var playerSpeed= 500
         var pv = 3
         var slot = 0
         var bandeau 
         var clé
         var currentScene
-        
+        var ennemis;
 
            
         
@@ -146,6 +148,15 @@
             player = this.physics.add.sprite(1100, 2500, 'perso');
             player.setSize (30, 9);
             player.setOffset (2, 40);
+
+            ennemis = this.physics.add.sprite(1725, 2400, 'ennemis');
+            ennemis = this.physics.add.sprite(1725, 2575, 'ennemis');
+            ennemis = this.physics.add.sprite(1725, 2280, 'ennemis');
+            ennemis = this.physics.add.sprite(1725, 2320, 'ennemis');
+            ennemis = this.physics.add.sprite(2325, 2320, 'ennemis');
+            ennemis = this.physics.add.sprite(2225, 2320, 'ennemis');
+            ennemis = this.physics.add.sprite(2225, 2420, 'ennemis');
+            ennemis = this.physics.add.sprite(2325, 2420, 'ennemis');
 
             this.physics.add.collider(player, this.bordures);
             this.bordures.setCollisionByProperty({ estSolide: true }, true);
@@ -269,7 +280,7 @@
             spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
             keyT = this.input.keyboard.addKey('t');
             keyZ = this.input.keyboard.addKey('z');
-            keyQ = this.input.keyboard.addKey('q');
+            keyQ = this.input.keyboard.addKey('q'); 
             keyD = this.input.keyboard.addKey('d');
             keyS = this.input.keyboard.addKey('s');
             doubleJump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -312,7 +323,6 @@
             }
             else {
                 player.setVelocityY(0);
-                player.anims.play("turn",true);
             }
             if (Phaser.Input.Keyboard.DownDuration(keyD, 100000)) {
                 player.setVelocityX(playerSpeed);
@@ -321,12 +331,17 @@
             else if (Phaser.Input.Keyboard.DownDuration(keyQ, 100000)) {
                 player.setVelocityX(-playerSpeed);
                 player.anims.play("left",true);
-            } else {
+            } 
+            else {
                 player.setVelocityX(0);
+            }
+            if (player.body.velocityX >0 & player.body.vdelocityY > 0) {
+                console.log("bonjour")
                 player.anims.play("turn",true);
             }
+             
             
-            } 
+        } 
 
             function entrerZoneCle(player,tpZoneCle){
                 player.x = 1200,  // co X dans lequel le joueur va se TP
@@ -371,7 +386,7 @@
             console.log("Bonus collected!!!", player, bonus)
 
             if (bonus.properties.bonusType == "Frapper") {
-                console.log("CACA", player, bonus)
+                console.log("dz", player, bonus)
                 bonus.destroy()
                 currentScene.Collectables.removeTileAt(bonus.x, bonus.y)
                 slot +=1
