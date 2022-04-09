@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mon 1er jeu Phaser</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+
+        class Titre extends Phaser.scene {
+            constructor() {
+                super("Titre")
+            }
+            preload() {
+
+                this.load.image("Title_screen", "assets/Title_screenv2.png"); //Charger l'image de Titre
+            }
+            create() {
+                this.imageTitre = this.physics.add.staticGroup();
+                this.imageTitre.create(700, 700, 'Title_screen').setScale(1); //emplacement de l'image d'accueil
+
+                this.cursors = this.input.keyboard.createCursorKeys();
+            }
+
+            update() {
+
+                if (this.cursors.space.isDown) {
+                    this.scene.start("Jeu");
+                }
+            }
+        }
+
+        class Jeu extends Phaser.Scene {
+            constructor() {
+                super("Jeu")
+                //les variables
+
+                this.player;
+                this.cursors;
+                this.keyF
+                this.keyZ;
+                this.keyQ;
+                this.keyS;
+                this.keyD;
+                this.playerSpeed = 100
+                this.pv = 3
+                this.slot = 0
+                this.bandeau
+                this.clé
+                this.currentScene
+                this.groupekunai
+                this.ennemis;
+            }
+            preload() {
+                this.load.image("tiles", "assets/Sprite_Sheet.png")
+                this.load.tilemapTiledJSON("map", "Map_Zelda_Like.JSON");
+
+                this.load.spritesheet('perso', 'assets/Animation_Héro.png',
+                    { frameWidth: 32, frameHeight: 48 });
+                this.load.spritesheet('ennemis', 'assets/Animation_monstre.png',
+                    { frameWidth: 32, frameHeight: 32 });
+
+                this.load.image("BLOCINVISIBLE", "assets/BLOCINVISIBLE.png")
+                this.load.image("Barre_de_vie3pv", "assets/Barre_de_vie3pv.png",
+                    { frameWidth: 16, frameHeight: 47 });
+                this.load.image("Barre_de_vie_mort", "assets/Barre_de_vie_mort.png",
+                    { frameWidth: 16, frameHeight: 47 });
+                this.load.image("Barre_de_vie2pv", "assets/Barre_de_vie2pv.png",
+                    { frameWidth: 16, frameHeight: 47 });
+                this.load.image("Barre_de_vie1pv", "assets/Barre_de_vie1pv.png",
+                    { frameWidth: 16, frameHeight: 47 });
+                this.load.image("Inventaire1slotpris", "assets/Inventaire1slotpris.png",
+                    { frameWidth: 96, frameHeight: 32 });
+                this.load.image("Inventaire2slotpris", "assets/Inventaire2slotpris.png",
+                    { frameWidth: 96, frameHeight: 32 });
+                this.load.image("Inventairefull", "assets/Inventairefull.png",
+                    { frameWidth: 96, frameHeight: 32 });
+                this.load.image("bandeau", "assets/bandeau.png");
+                this.load.image("clé", "assets/bandeau.png");
+                this.load.image("kunaibas", "assets/kunaibas.png",
+                    { frameWidth: 7, frameHeight: 20 });
+                this.load.image("kunaihaut", "assets/kunaihaut.png",
+                    { frameWidth: 7, frameHeight: 20 });
+                this.load.image("kunaigauche", "assets/kunaigauche.png",
+                    { frameWidth: 20, frameHeight: 7 });
+                this.load.image("kunaidroite", "assets/kunaidroite.png",
+                    { frameWidth: 20, frameHeight: 7 });
+            }
+            create() {
+                currentScene = this
+
+
+                const carte = this.make.tilemap({ key: 'map' });
+
+                const tileset = carte.addTilesetImage(
+                    "Sprite_Sheet",
+                    "tiles",
+
+                );
+
+                const Sol = carte.createLayer(
+                    "Sol",
+                    tileset
+                );
+
+                this.Chaine = carte.createLayer(
+                    "Chaine",
+                    tileset
+                );
+
+                this.panneaux = carte.createLayer(
+                    "Calque de Tuiles 2",
+                    tileset
+                );
+
+                this.Passages = carte.createLayer(
+                    "Passages",
+                    tileset
+                );
+
+
+
+                this.Vases = carte.createLayer(
+                    "Vases",
+                    tileset
+                );
+
+
+
+                this.Caisses = carte.createLayer(
+                    "Caisses",
+                    tileset
+                );
+
+                this.bordures = carte.createLayer(
+                    "bordures",
+                    tileset
+                );
+
+                this.Collectables = carte.createLayer(
+                    "Collectables",
+                    tileset
+                );
+
+
+
+                this.Collectables.setCollisionByProperty({ estCollectible: true }, true);
+
+
+                player = this.physics.add.sprite(1100, 2500, 'perso');
+                player.setSize(30, 9);
+                player.setOffset(2, 40);
+
+                ennemis = this.physics.add.sprite(1725, 2400, 'ennemis');
+                ennemis = this.physics.add.sprite(1725, 2575, 'ennemis');
+                ennemis = this.physics.add.sprite(1725, 2280, 'ennemis');
+                ennemis = this.physics.add.sprite(1725, 2320, 'ennemis');
+                ennemis = this.physics.add.sprite(2325, 2320, 'ennemis');
+                ennemis = this.physics.add.sprite(2225, 2320, 'ennemis');
+                ennemis = this.physics.add.sprite(2225, 2420, 'ennemis');
+                ennemis = this.physics.add.sprite(2325, 2420, 'ennemis');
+                ennemis = this.physics.add.sprite(1050, 1400, 'ennemis');
+                ennemis = this.physics.add.sprite(1050, 1500, 'ennemis');
+                ennemis = this.physics.add.sprite(1050, 1300, 'ennemis');
+                ennemis = this.physics.add.sprite(1150, 1300, 'ennemis');
+                ennemis = this.physics.add.sprite(1150, 1400, 'ennemis');
+                ennemis = this.physics.add.sprite(1150, 1500, 'ennemis');
+                ennemis = this.physics.add.sprite(1150, 1250, 'ennemis');
+                ennemis = this.physics.add.sprite(1250, 1300, 'ennemis');
+                ennemis = this.physics.add.sprite(1250, 1400, 'ennemis');
+                ennemis = this.physics.add.sprite(1250, 1500, 'ennemis');
+
+                this.physics.add.collider(player, this.bordures);
+                this.bordures.setCollisionByProperty({ estSolide: true }, true);
+
+                this.cameras.main.zoom = 2
+                this.cameras.main.startFollow(player);
+                this.physics.world.setBounds(0, 0, 3000, 5000);
+                this.cameras.main.setBounds(0, 0, 3000, 5000);
+
+
+
+
+                player.setCollideWorldBounds(true);
+                this.physics.add.collider(player, this.Collectables, collectBonus, null, this);
+
+
+
+
+                tpZoneCle = this.physics.add.image(1010, 2380, "BLOCINVISIBLE")
+                // je place la zone ou le joueur doit passer pour se tp 
+
+                this.physics.add.overlap(player, tpZoneCle, entrerZoneCle, null, this)
+                // nom de la fonction appelé
+
+
+                // fonction qui permet de tp le joueur lorsquil passe sur l'image "tpZonecle"
+
+                /***************************************************************************************************/
+
+
+
+
+                /***************************************************************************************************/
+
+
+
+
+
+
+                tpCentreZoneCle = this.physics.add.image(1200, 2930, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpCentreZoneCle, sortirZoneCle, null, this)
+
+
+                tpMidZoneHaut = this.physics.add.image(1296, 2380, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpMidZoneHaut, entreeMidZoneHaut, null, this)
+
+                tpCentreMidZoneHaut = this.physics.add.image(1100, 2060, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpCentreMidZoneHaut, sortieMidZoneHaut, null, this)
+
+                tpMidZoneTrous = this.physics.add.image(1340, 2490, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpMidZoneTrous, tpZoneLabyrinthe, null, this)
+
+                tpZoneTrousMid = this.physics.add.image(1490, 2525, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpZoneTrousMid, tpZoneLabyrintheMid, null, this)
+
+                tpZoneTrousItem = this.physics.add.image(1970, 2400, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpZoneTrousItem, tpZoneLabyrintheItem, null, this)
+
+                tpZoneItemTrous = this.physics.add.image(2120, 2370, "BLOCINVISIBLE")
+
+                this.physics.add.overlap(player, tpZoneItemTrous, tpZoneItemLabyrinthe, null, this)
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                Barre_de_vie = this.add.image(345, 235, "Barre_de_vie3pv")
+
+                Barre_de_vie.setScrollFactor(0);
+
+                Barre_de_vie.setScale(1.9);
+
+                Barre_inventaire = this.add.image(900, 520, "Inventaire1slotpris")
+
+                Barre_inventaire.setScrollFactor(0);
+
+                Barre_inventaire.setScale(1);
+
+                Barre_de_vie.setInteractive();
+
+                Barre_inventaire.setInteractive();
+
+
+
+                this.anims.create({
+                    key: 'left',
+                    frames: this.anims.generateFrameNumbers('perso', { start: 4, end: 7 }),
+                    frameRate: 5,
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: 'turn',
+                    frames: [{ key: 'perso', frame: 0 }],
+                    frameRate: 5
+                });
+                this.anims.create({
+                    key: 'right',
+                    frames: this.anims.generateFrameNumbers('perso', { start: 12, end: 15 }),
+                    frameRate: 5,
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: 'top',
+                    frames: this.anims.generateFrameNumbers('perso', { start: 8, end: 11 }),
+                    frameRate: 5,
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: 'down',
+                    frames: this.anims.generateFrameNumbers('perso', { start: 0, end: 3 }),
+                    frameRate: 5,
+                    repeat: -1
+                });
+
+
+
+
+                this.input.keyboard.enabled = true
+                spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+                keyT = this.input.keyboard.addKey('t');
+                keyZ = this.input.keyboard.addKey('z');
+                keyQ = this.input.keyboard.addKey('q');
+                keyD = this.input.keyboard.addKey('d');
+                keyS = this.input.keyboard.addKey('s');
+                keyF = this.input.keyboard.addKey('f');
+
+            }
+            update() {
+                function update() {
+                    this.attackUp = 'attackUp'
+                    this.attackDown = 'attackDown'
+                    this.attackLeft = 'attackLeft'
+                    this.attackRight = 'attackRight'
+                    if (pv == 3) {
+                        Barre_de_vie.setTexture("Barre_de_vie3pv")
+                    }
+
+                    if (pv == 2) {
+                        Barre_de_vie.setTexture("Barre_de_vie2pv")
+                    }
+                    if (pv == 1) {
+                        Barre_de_vie.setTexture("Barre_de_vie1pv")
+                    }
+                    if (pv == 0) {
+                        Barre_de_vie.setTexture("Barre_de_vie_mort")
+                    }
+
+                    console.log(slot)
+
+                    if (slot == 0) {
+                        Barre_inventaire.setTexture("Inventaire1slotpris")
+                    }
+
+                    if (Phaser.Input.Keyboard.DownDuration(keyZ, 100000)) {
+                        player.setVelocityY(-playerSpeed);
+                        player.anims.play("top", true);
+
+                    }
+                    else if (Phaser.Input.Keyboard.DownDuration(keyS, 100000)) {
+                        player.setVelocityY(playerSpeed);
+                        player.anims.play("down", true);
+                    }
+                    else {
+                        player.setVelocityY(0);
+                    }
+                    if (Phaser.Input.Keyboard.DownDuration(keyD, 100000)) {
+                        player.setVelocityX(playerSpeed);
+                        player.anims.play("right", true);
+                    }
+                    else if (Phaser.Input.Keyboard.DownDuration(keyQ, 100000)) {
+                        player.setVelocityX(-playerSpeed);
+                        player.anims.play("left", true);
+                    }
+                    else {
+                        player.setVelocityX(0);
+                    }
+                    if (player.body.velocityX > 0 & player.body.vdelocityY > 0) {
+                        console.log("bonjour")
+                        player.anims.play("turn", true);
+                    }
+
+
+                }
+
+
+            }
+            tirer() {
+
+                var kunai;
+                console.log(this.player.direction);
+
+                if (this.player.direction == 'left') { 
+                    var kunai = this.groupekunai.create(this.player.x - 25, this.player.y - 4, 'kunaigauche');
+                    kunai.setVelocity(-400,0);
+                }
+                if (this.player.direction == 'right') {
+                    var kunai = this.groupekunai.create(this.player.x + 25, this.player.y - 4, 'kunaidroite'); 
+                    kunai.setVelocity(400,0);
+                }
+                if (this.player.direction == 'up') {
+                    var kunai = this.groupekunai.create(this.player.x, this.player.y - 4, 'kunaihaut');
+                    kunai.setVelocity(0,-400);
+                }
+                if (this.player.direction == 'down') {
+                    var kunai = this.groupekunai.create(this.player.x, this.player.y - 4, 'kunaibas');
+                    kunai.setVelocity(0,400);
+                    this.groupekunai =this.physics.add.group();
+                }
+            }
+
+        }
+                function entrerZoneCle(player, tpZoneCle) {
+                    player.x = 1200,  // co X dans lequel le joueur va se TP
+                        player.y = 3000  // co Y dans lequel le joueur va se TP
+                }
+
+
+                function sortirZoneCle(player, tpCentreZoneCle) {
+                    player.x = 1010,
+                        player.y = 2480
+                }
+
+                function entreeMidZoneHaut(player, tpMidZoneHaut) {
+                    player.x = 1100,
+                        player.y = 2000
+                }
+
+                function sortieMidZoneHaut(player, tpCentreMidZoneHaut) {
+                    player.x = 1296,
+                        player.y = 2460
+                }
+
+                function tpZoneLabyrinthe(player, tpMidZoneTrous) {
+                    player.x = 1520,
+                        player.y = 2550
+                }
+                
+                    function tpZoneLabyrintheMid(player, tpZoneTrousMid) {
+                        player.x = 1300,
+                            player.y = 2490
+                    }
+                    function tpZoneLabyrintheItem(player, tpZoneTrousItem) {
+                        player.x = 2170,
+                            player.y = 2350
+
+                    }
+                    function tpZoneItemLabyrinthe(player, tpZoneItemTrous) {
+                        player.x = 1950
+                        player.y = 2350
+                    }
+                    function collectBonus(player, bonus) {
+                        console.log("Bonus collected!!!", player, bonus)
+
+                        if (bonus.properties.bonusType == "Frapper") {
+                            console.log("dz", player, bonus)
+                            bonus.destroy()
+                            currentScene.Collectables.removeTileAt(bonus.x, bonus.y)
+                            slot += 1
+                            Barre_inventaire.setTexture("Inventaire2slotpris")
+                            return
+                        }
+                        if (bonus.properties.bonusType == "Vie") {
+                            bonus.destroy()
+                            currentScene.Collectables.removeTileAt(bonus.x, bonus.y)
+                            //player.pv += 1
+                            //if (player.pv > 3)
+                            //player.pv = 3
+                            //pvText.setText('PV : ' + player.pv + '/3')
+                            return
+
+                        }
+                        if (bonus.properties.bonusType == "ouvrir") {
+                            bonus.destroy()
+                            currentScene.Collectables.removeTileAt(bonus.x, bonus.y)
+                            Barre_inventaire.setTexture("Inventairefull")
+
+                            return
+                        }
+                        //console.log("Bonus collected!!!", player, bonus)
+                        if (this.input.keyboard.checkDown(this.cursors.space,200)==true){this.tirer()}
+                
+            }
+        
+        var config = {
+            type: Phaser.AUTO,
+            width: 1280,
+            height: 720,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: {
+                        y: 0,
+                    debug: false
+                    },
+                    scene: [Jeu]
+                }
+            },
+            pixelArt: true,
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+        new Phaser.Game(config);
+
+
+
+
+    </script>
+</body>
+
+</html>

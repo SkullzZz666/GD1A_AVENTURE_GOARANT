@@ -65,13 +65,22 @@
             { frameWidth: 96, frameHeight: 32});
             this.load.image("bandeau", "assets/bandeau.png");
             this.load.image("clé","assets/bandeau.png");
+            this.load.image("kunaibas","assets/kunaibas.png",
+            { frameWidth: 7, frameHeight: 20});
+            this.load.image("kunaihaut","assets/kunaihaut.png",
+            { frameWidth: 7, frameHeight: 20});
+            this.load.image("kunaigauche","assets/kunaigauche.png",
+            { frameWidth: 20, frameHeight: 7});
+            this.load.image("kunaidroite","assets/kunaidroite.png",
+            { frameWidth: 20, frameHeight: 7});
         }
+
 
 
 
         var player;
         var cursors;
-        var spacebar
+        var keyF
         var keyT
         var keyZ;
         var keyQ;
@@ -83,6 +92,7 @@
         var bandeau 
         var clé
         var currentScene
+        var kunai
         var ennemis;
 
            
@@ -110,7 +120,11 @@
                     tileset
                     );
 
-
+                this.panneaux = carte.createLayer(
+                    "Calque de Tuiles 2",
+                    tileset
+                );
+ 
                 this.Passages = carte.createLayer(
                     "Passages",
                     tileset
@@ -157,6 +171,16 @@
             ennemis = this.physics.add.sprite(2225, 2320, 'ennemis');
             ennemis = this.physics.add.sprite(2225, 2420, 'ennemis');
             ennemis = this.physics.add.sprite(2325, 2420, 'ennemis');
+            ennemis = this.physics.add.sprite(1050, 1400, 'ennemis');
+            ennemis = this.physics.add.sprite(1050, 1500, 'ennemis');
+            ennemis = this.physics.add.sprite(1050, 1300, 'ennemis');
+            ennemis = this.physics.add.sprite(1150, 1300, 'ennemis');
+            ennemis = this.physics.add.sprite(1150, 1400, 'ennemis');
+            ennemis = this.physics.add.sprite(1150, 1500, 'ennemis');
+            ennemis = this.physics.add.sprite(1150, 1250, 'ennemis');
+            ennemis = this.physics.add.sprite(1250, 1300, 'ennemis');
+            ennemis = this.physics.add.sprite(1250, 1400, 'ennemis');
+            ennemis = this.physics.add.sprite(1250, 1500, 'ennemis');
 
             this.physics.add.collider(player, this.bordures);
             this.bordures.setCollisionByProperty({ estSolide: true }, true);
@@ -172,7 +196,7 @@
             player.setCollideWorldBounds(true);
             this.physics.add.collider(player, this.Collectables, collectBonus, null, this);
 
-            
+
 
 
             tpZoneCle =  this.physics.add.image(1010,2380,"BLOCINVISIBLE")
@@ -246,30 +270,30 @@
             this.anims.create({
                 key: 'left',
                 frames: this.anims.generateFrameNumbers('perso', {start:4,end:7}),
-                frameRate: 10,
+                frameRate: 5,
                 repeat: -1
                 });
                 this.anims.create({
                 key: 'turn',
                 frames: [ { key: 'perso', frame: 0 } ],
-                frameRate: 20
+                frameRate: 5
                 });
                 this.anims.create({
                 key: 'right',
                 frames: this.anims.generateFrameNumbers('perso', {start:12,end:15}),
-                frameRate: 10,
+                frameRate: 5,
                 repeat: -1
                 });
                 this.anims.create({
                 key: 'top',
                 frames: this.anims.generateFrameNumbers('perso', {start:8,end:11}),
-                frameRate: 10,
+                frameRate: 5,
                 repeat: -1
                 });
                 this.anims.create({
                 key: 'down',
                 frames: this.anims.generateFrameNumbers('perso', {start:0,end:3}),
-                frameRate: 10,
+                frameRate: 5,
                 repeat: -1
                 });
 
@@ -283,11 +307,15 @@
             keyQ = this.input.keyboard.addKey('q'); 
             keyD = this.input.keyboard.addKey('d');
             keyS = this.input.keyboard.addKey('s');
-            doubleJump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+            keyF = this.input.keyboard.addKey('f');
 
 
         };
         function update() {
+            this.attackUp = 'attackUp'
+                    this.attackDown = 'attackDown'
+                    this.attackLeft = 'attackLeft'
+                    this.attackRight = 'attackRight'
             if (pv==3){
                 Barre_de_vie.setTexture("Barre_de_vie3pv")
             }
@@ -413,7 +441,28 @@
             //console.log("Bonus collected!!!", player, bonus)
         }
             
-            
+        var config = {
+            type: Phaser.AUTO,
+            width: 1280,
+            height: 720,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: {
+                        y: 0
+                    
+                    },
+                    debug: true
+                }
+            },
+            pixelArt: true,
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
 
             
 
