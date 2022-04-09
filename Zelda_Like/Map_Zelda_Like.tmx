@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< Updated upstream
 <map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="64" height="80" tilewidth="32" tileheight="32" infinite="1" nextlayerid="18" nextobjectid="14">
+=======
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="64" height="80" tilewidth="32" tileheight="32" infinite="1" nextlayerid="17" nextobjectid="18">
+>>>>>>> Stashed changes
  <editorsettings>
   <export target="Map_Zelda_Like.json" format="json"/>
  </editorsettings>
@@ -20842,6 +20846,7 @@
 </chunk>
   </data>
  </layer>
+<<<<<<< Updated upstream
  <layer id="9" name="Caisses" width="64" height="80">
   <data encoding="csv">
    <chunk x="16" y="64" width="16" height="16">
@@ -20886,6 +20891,20 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,336,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+=======
+ <layer id="10" name="Collectables" width="64" height="80">
+  <data encoding="csv"/>
+ </layer>
+ <objectgroup id="15" name="Bandeau">
+  <object id="15" gid="578" x="2240" y="2400" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="16" name="Clé">
+  <object id="17" gid="466" x="1120" y="3296" width="32" height="32"/>
+ </objectgroup>
+ <layer id="9" name="Caisses" width="64" height="80">
+  <data encoding="csv">
+   <chunk x="32" y="80" width="16" height="16">
+>>>>>>> Stashed changes
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
